@@ -1,14 +1,14 @@
-import { computed, Directive, signal } from '@angular/core';
+import { computed } from '@angular/core';
+import { FormValueControl } from '@angular/forms/signals';
 import { isNotEmpty } from '@openng/optimus-ui-utils';
 import { BaseComponent } from '@openng/optimus-ui/basecomponent';
 
-@Directive({ standalone: true })
-export class BaseModelHolder<PT = any> extends BaseComponent<PT> {
-    modelValue = signal<string | string[] | any | undefined>(undefined);
+export abstract class BaseModelHolder<PT = any, ModelValue = any, isNullable extends boolean = false> extends BaseComponent<PT> implements FormValueControl<isNullable extends true ? ModelValue | null : NonNullable<ModelValue>> {
+    abstract value: FormValueControl<isNullable extends true ? ModelValue | null : NonNullable<ModelValue>>['value'];
 
-    $filled = computed(() => isNotEmpty(this.modelValue()));
+    $filled = computed(() => isNotEmpty(this.value()));
 
-    writeModelValue(value: any) {
-        this.modelValue.set(value);
+    writeModelValue(value: ReturnType<typeof this.value>) {
+        this.value.set(value);
     }
 }

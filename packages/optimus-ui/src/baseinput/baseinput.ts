@@ -1,9 +1,9 @@
-import { booleanAttribute, computed, Directive, inject, input } from '@angular/core';
+import { booleanAttribute, computed, Directive, inject, input, signal } from '@angular/core';
 import { BaseEditableHolder } from '@openng/optimus-ui/baseeditableholder';
 import { Fluid } from '@openng/optimus-ui/fluid';
 
 @Directive({ standalone: true })
-export class BaseInput<PT = any> extends BaseEditableHolder<PT> {
+export abstract class BaseInput<PT = any, ModelValue = any, isNullable extends boolean = false> extends BaseEditableHolder<PT, ModelValue, isNullable> {
     pcFluid: Fluid | null = inject(Fluid, { optional: true, host: true, skipSelf: true });
 
     /**
@@ -68,6 +68,8 @@ export class BaseInput<PT = any> extends BaseEditableHolder<PT> {
     maxlength = input<number | null | undefined>();
 
     $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant());
+
+    focused = signal(false);
 
     get hasFluid() {
         return this.fluid() ?? !!this.pcFluid;
